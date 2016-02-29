@@ -1,11 +1,5 @@
----
-title: 'Reproducible Research: Peer Assessment 1'
-subtitle: 'Analysis of Personal Activity Monitoring Device Data'
-author: "et408"
-output:
-  html_document: 
-    keep_md: yes
----
+# Reproducible Research: Peer Assessment 1
+et408  
 
 ### Data collected from a subject wearing personal activity monitoring device is analyzed in this assignment
 
@@ -13,26 +7,57 @@ Raw activity data (measured in the number of steps taken in a 5-minute interval)
  
 ## Loading and preprocessing the data
 The raw data are loaded from the file `activity.csv` into the data frame `activity_raw`. No pre-processing is needed.
-```{r loading_data, eval=TRUE, echo=TRUE, fig.path = 'figures/'}
+
+```r
 # Reading raw activity data into 'activity_raw' data.frame
 activity_raw <- read.csv("activity.csv")
 head(activity_raw)
+```
+
+```
+##   steps       date interval
+## 1    NA 2012-10-01        0
+## 2    NA 2012-10-01        5
+## 3    NA 2012-10-01       10
+## 4    NA 2012-10-01       15
+## 5    NA 2012-10-01       20
+## 6    NA 2012-10-01       25
+```
+
+```r
 summary(activity_raw)
+```
+
+```
+##      steps                date          interval     
+##  Min.   :  0.00   2012-10-01:  288   Min.   :   0.0  
+##  1st Qu.:  0.00   2012-10-02:  288   1st Qu.: 588.8  
+##  Median :  0.00   2012-10-03:  288   Median :1177.5  
+##  Mean   : 37.38   2012-10-04:  288   Mean   :1177.5  
+##  3rd Qu.: 12.00   2012-10-05:  288   3rd Qu.:1766.2  
+##  Max.   :806.00   2012-10-06:  288   Max.   :2355.0  
+##  NA's   :2304     (Other)   :15840
 ```
 
 
 ## Tallying intervals with `NA` values
 The number of 5-minute intervals lacking step measurements is tallied. There are 2304 of 17586 observations for which `steps` has the value `NA`.
-```{r tallying_na_values, eval=TRUE, echo=TRUE}
+
+```r
 # Logical vector indicating if no steps were measured on a given 5-minute interval
 activity_steps_na_logical <- is.na(activity_raw$steps)
 # Number of time intervals in which no steps were measured
 sum(activity_steps_na_logical)
 ```
 
+```
+## [1] 2304
+```
+
 ## What is the total number of steps taken per day?
 The intervals are grouped by day, and the sum of `steps` per day is calculated and plotted in a histogram.
-```{r total_steps_per_day, eval=TRUE, echo=TRUE, message = FALSE}
+
+```r
 # Aggregate steps by date
 steps_by_date <- aggregate(activity_raw$steps, 
                            by = activity_raw["date"], 
@@ -58,20 +83,33 @@ h <- ggplot(steps_by_date, aes(date, x)) +
 print(h)
 ```
 
+```
+## Warning: Removed 34 rows containing missing values (position_stack).
+```
+
+![](PA1_template_files/figure-html/total_steps_per_day-1.png)
+
 Note that, per the warning, 34 of the 61 days have no step measurements, and are omitted from the plot. This agrees with the histogram which depicts 27 days with `step` values.
 
 ## What are the mean and median steps taken per day?
 `NA` values are omitted, and the mean and median of `steps` per day are calculated.
-```{r mean_and_median_steps_per_day, eval=TRUE, echo=TRUE}
+
+```r
 # Mean and median of steps taken per day
 mean_and_median_per_day <- data.frame(mean = mean(steps_by_date$x, na.rm = TRUE), 
                                       median = median(steps_by_date$x, na.rm = TRUE))
 mean_and_median_per_day
 ```
 
+```
+##       mean median
+## 1 10766.19  10765
+```
+
 ## What is the average daily activity pattern?
 The data frame `activity_raw` is grouped by interval, and mean of steps taken per interval is calculated. The results are plotted in a line graph.ff
-```{r average_daily_activity_pattern, eval=TRUE, echo=TRUE}
+
+```r
 avg_steps_by_interval <- aggregate(activity_raw$steps, 
                                    by = activity_raw["interval"], 
                                    FUN = mean, 
@@ -88,8 +126,11 @@ t1 <- ggplot(avg_steps_by_interval, aes(interval, x)) +
 print(t1)
 ```
 
+![](PA1_template_files/figure-html/average_daily_activity_pattern-1.png)
+
 ## Which interval has the maximum mean number of steps?
-```{r maximum_mean_steps_interval, eval=TRUE, echo=TRUE}
+
+```r
 max_mean_interval_number <- avg_steps_by_interval[avg_steps_by_interval$x == max(avg_steps_by_interval$x, na.rm = TRUE),]$interval
 # Start time of interval with maximum mean number of steps
 library(lubridate)
@@ -99,11 +140,16 @@ max_mean_time <- hm(paste(max_mean_hour, max_mean_minute, sep = ":"))
 max_mean_time
 ```
 
+```
+## [1] "8H 35M 0S"
+```
+
 The 5-minute interval starting at 8:35 a.m. has the maximum mean number of steps. This is consistent with the plot above "Mean Number of Steps Taken in 5-Minute Intervals".
 
 ## Imputing missing values
 `NA` values for `activity_raw$steps` are replaced with `0`.
-```{r imputing_missing_values, eval=TRUE, echo=TRUE}
+
+```r
 # Creating 'activity_no_na_steps' by replacing NA steps values in activity with 0 
 # (while preserving 'activity_raw')
 activity_no_na_steps <- activity_raw
@@ -113,9 +159,14 @@ activity_steps_0_logical <- activity_no_na_steps$steps == 0
 sum(activity_steps_0_logical)
 ```
 
+```
+## [1] 13318
+```
+
 ## Are there differences in activity patterns between weekdays and weekends?
 Activity observations are classified as `weekend` or `weekday` and grouped by `interval` and `weekday_factor`. Then the mean of each interval is calculated, and two line graphs are generated to compare average steps taken per interval on weekdays and weekend days.
-```{r weekday_and_weekend_activity_patterns, eval=TRUE, echo=TRUE, warning = FALSE, message = FALSE}
+
+```r
 library(dplyr)
 # Classify each day as weekday or weekend day
 activity_no_na_steps_weekend_days <- 
@@ -141,5 +192,7 @@ t2 <- ggplot(avg_interval_by_weekday, aes(interval, steps)) +
     plot_theme
 print(t2)
 ```
+
+![](PA1_template_files/figure-html/weekday_and_weekend_activity_patterns-1.png)
 
 From the plots we see that on average, on weekdays the subject tended to start taking steps around 5 a.m., but on weekends on average the subject did not start taking steps until 6 a.m.. Also, on average the subject was not active until 8 a.m. on weekends. While on weekdays, the subject had a markedly higher peak between 8 a.m. and 9 a.m. when compared to weekend days. The average number of steps the subject took on weekends was higher than on weekdays with several peaks above 100 steps per interval, while on weekdays (excluding the 8 a.m. hour) there was only one interval when the subject topped 100 steps in a 5-minute interval. 
