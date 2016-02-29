@@ -1,15 +1,16 @@
 ---
 title: 'Reproducible Research: Peer Assessment 1'
-subtitle: 'Analysis of Personal Activity Monitoring Device Data'
 author: "et408"
+subtitle: Analysis of Personal Activity Monitoring Device Data
 output:
-  html_document: 
+  html_document:
     keep_md: yes
+  pdf_document: default
 ---
 
 ### Data collected from a subject wearing personal activity monitoring device is analyzed in this assignment
 
-Raw activity data (measured in the number of steps taken in a 5-minute interval) is loaded to a data frame from activity.csv. The columns of the data frame are `date`, `steps` and `interval`, where `steps` is the number of steps recorded in the given interval. `interval` is a factor variable with levels $$\{0, 5, ..., 55, 100, 105, ..., 150, 155, ..., 2300, ..., 2355\}$$ which describe the set of 5-minute time intervals given by $$\bigcup _{i=0}^{23} \bigcup _{j=0}^{11}\big[100i+5j, 100i+5j+5\big)$$ In longhand, the intervals are $$\{[0,5), [5,10), ..., [55,60), [100, 105), ..., [155,160), ..., [2300, 2305), ..., [2355, 2400)\}$$ The endpoints of the intervals encode the hour of the day and the minute of the hour. Given an interval [$\epsilon$, $\epsilon$+5), $\epsilon$ mod 100 is the hour of the day on the 24-hour clock, and $\epsilon$ - 100($\epsilon$ mod 100) is the minute of the hour. For example, the `interval` factor level 0 is for the time interval [12:00 midnight, 12:05 a.m.), and the `interval` factor level 1645 is for the time interval [4:45 p.m., 4:50 p.m.). The data cover 61 consecutive days beginning with October 1st, 2012, and there are 288 5-minute intervals in a day. Thus, there are 17586 observations.
+Raw activity data (measured in the number of steps taken in a 5-minute interval) is loaded to a data frame from activity.csv. The columns of the data frame are `date`, `steps` and `interval`, where `steps` is the number of steps recorded in the given interval. `interval` is a factor variable with levels $$\{0, 5, ..., 55, 100, 105, ..., 150, 155, ..., 2300, ..., 2355\}$$ which describe the set of 5-minute time intervals given by $$\bigcup _{i=0}^{23} \bigcup _{j=0}^{11}\big[100i+5j, 100i+5j+5\big).$$ In longhand, the intervals are $$\{[0,5), [5,10), ..., [55,60), [100, 105), ..., [155,160), ..., [2300, 2305), ..., [2355, 2400)\}.$$ The endpoints of the intervals encode the hour of the day and the minute of the hour. Given an interval [$\epsilon$, $\epsilon$+5), $\epsilon$ mod 100 is the hour of the day on the 24-hour clock, and $\epsilon$ - 100($\epsilon$ mod 100) is the minute of the hour. For example, the `interval` factor level 0 is for the time interval [12:00 midnight, 12:05 a.m.), and the `interval` factor level 1645 is for the time interval [4:45 p.m., 4:50 p.m.). The data cover 61 consecutive days beginning with October 1st, 2012, and there are 288 5-minute intervals in a day. Thus, there are 17586 observations.
  
 ## Loading and preprocessing the data
 The raw data are loaded from the file `activity.csv` into the data frame `activity_raw`. No pre-processing is needed.
